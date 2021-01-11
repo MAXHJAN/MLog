@@ -1,4 +1,4 @@
-package com.mx.mlog
+package com.mx.simple
 
 import org.junit.Test
 

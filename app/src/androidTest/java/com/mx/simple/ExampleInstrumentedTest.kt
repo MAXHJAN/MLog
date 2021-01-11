@@ -1,4 +1,4 @@
-package com.mx.mlog
+package com.mx.simple
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,4 +1,4 @@
-package com.mx.mlog
+package com.mx.simple
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
