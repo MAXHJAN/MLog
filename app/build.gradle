@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.mx.mlog"
+        applicationId "com.mx.simple"
         minSdkVersion 16
         targetSdkVersion 30
         versionCode 1
@@ -42,4 +42,6 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    implementation project(':mlog')
+   /* implementation 'com.github.MAXHJAN:MLog:1.0.1'*/
 }

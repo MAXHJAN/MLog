@@ -1,6 +1,5 @@
 package com.mx.mlog
 
-import android.text.TextUtils
 import android.util.Log
 
 /**
@@ -8,9 +7,9 @@ import android.util.Log
  * date   : 2020/11/25 11:44
  */
 object MLog {
-    private var sDebug = BuildConfig.DEBUG
+    private var sDebug = true
     private var sTag = "TAG"
-
+    private const val sizeSegment = 3 * 1024
 
     //得到上一个栈帧
     private// find the target invoked method
@@ -35,70 +34,54 @@ object MLog {
         sTag = tag
     }
 
-    private fun getFinalTag(tag: String): String {
-        return if (!TextUtils.isEmpty(tag)) {
-            tag
-        } else sTag
+    fun d(msg: String) {
+        if (!sDebug) return
+        log(Log.DEBUG, sTag, msg)
     }
 
-    fun d(msg: String?) {
+    fun d(tag: String, msg: String) {
         if (!sDebug) return
-
-        val targetStackTraceElement = targetStackTraceElement
-        Log.d(
-            sTag,
-            ".(${targetStackTraceElement!!.fileName}:${targetStackTraceElement.lineNumber})    $msg"
-        )
+        log(Log.DEBUG, sTag, msg)
     }
 
-    fun d(tag: String, msg: String?) {
+    fun e(msg: String) {
         if (!sDebug) return
-
-        val finalTag = getFinalTag(tag)
-        val targetStackTraceElement = targetStackTraceElement
-        Log.d(
-            finalTag,
-            ".(${targetStackTraceElement!!.fileName}:${targetStackTraceElement.lineNumber})    $msg"
-        )
+        log(Log.ERROR, sTag, msg)
     }
 
-    fun e(msg: String?) {
+    fun e(tag: String, msg: String) {
         if (!sDebug) return
-        val targetStackTraceElement = targetStackTraceElement
-        Log.e(
-            sTag,
-            ".(${targetStackTraceElement!!.fileName}:${targetStackTraceElement.lineNumber})    $msg"
-        )
+        log(Log.ERROR, tag, msg)
     }
 
-    fun e(tag: String, msg: String?) {
+    fun i(msg: String) {
         if (!sDebug) return
-
-        val finalTag = getFinalTag(tag)
-        val targetStackTraceElement = targetStackTraceElement
-        Log.e(
-            finalTag,
-            ".(${targetStackTraceElement!!.fileName}:${targetStackTraceElement.lineNumber})    $msg"
-        )
+        log(Log.INFO, sTag, msg)
     }
 
-    fun i(msg: String?) {
+    fun i(tag: String, msg: String) {
         if (!sDebug) return
-        val targetStackTraceElement = targetStackTraceElement
-        Log.i(
-            sTag,
-            ".(${targetStackTraceElement!!.fileName}:${targetStackTraceElement.lineNumber})    $msg"
-        )
+        log(Log.INFO, tag, msg)
     }
 
-    fun i(tag: String, msg: String?) {
-        if (!sDebug) return
-
-        val finalTag = getFinalTag(tag)
-        val targetStackTraceElement = targetStackTraceElement
-        Log.i(
-            finalTag,
-            ".(${targetStackTraceElement!!.fileName}:${targetStackTraceElement.lineNumber})    $msg"
-        )
+    private fun log(level: Int, tag: String, msg: String) {
+        val targetStackTrace = targetStackTraceElement
+        var message = ".(${targetStackTrace!!.fileName}:${targetStackTrace.lineNumber})   $msg"
+        try {
+            val length = message.length.toLong()
+            if (length <= sizeSegment) { // 长度小于等于限制直接打印
+                Log.println(level, tag, message)
+            } else {
+                while (message.length > sizeSegment) { // 循环分段打印日志
+                    val logContent = message.substring(0, sizeSegment)
+                    message = message.replace(logContent, "")
+                    Log.println(level, tag, logContent)
+                }
+                Log.println(level, tag, msg) // 打印剩余日志
+            }
+        } catch (e: java.lang.Exception) {
+            e.printStackTrace()
+            Log.println(level, tag, msg)
+        }
     }
 }
