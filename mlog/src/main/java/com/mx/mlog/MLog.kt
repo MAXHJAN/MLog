@@ -77,7 +77,7 @@ object MLog {
                     message = message.replace(logContent, "")
                     Log.println(level, tag, logContent)
                 }
-                Log.println(level, tag, msg) // 打印剩余日志
+                Log.println(level, tag, message) // 打印剩余日志
             }
         } catch (e: java.lang.Exception) {
             e.printStackTrace()
